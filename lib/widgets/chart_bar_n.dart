@@ -1,30 +1,30 @@
 import 'package:flutter/material.dart';
 
-class ChartBar extends StatelessWidget {
+class ChartBarN extends StatelessWidget {
   final String label;
   final double spendingAmount;
   final double spendingPctOfTotal;
 
-  ChartBar(this.label, this.spendingAmount, this.spendingPctOfTotal);
+  ChartBarN(this.label, this.spendingAmount, this.spendingPctOfTotal);
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (ctx, constraints) {
-        return Column(
+        return Row(
           children: <Widget>[
             Container(
               height: constraints.maxHeight * 0.15,
-              child: FittedBox(
-                child: Text('\$${spendingAmount.toStringAsFixed(0)}'),
-              ),
+               child: 
+                 Text('\$${spendingAmount.toStringAsFixed(0)}',style: TextStyle(fontSize: 9,fontWeight: FontWeight.bold),),
+            
             ),
             SizedBox(
-              height: constraints.maxHeight * 0.05,
+              width: constraints.maxWidth * 0.05,
             ),
             Container(
-              height: constraints.maxHeight * 0.6,
-              width: 10,
+              height: 10,
+              width: constraints.maxWidth * 0.6,
               child: Stack(
                 children: <Widget>[
                   Container(
@@ -35,7 +35,7 @@ class ChartBar extends StatelessWidget {
                     ),
                   ),
                   FractionallySizedBox(
-                    heightFactor: spendingPctOfTotal,
+                    widthFactor: spendingPctOfTotal,
                     child: Container(
                       decoration: BoxDecoration(
                         color: Theme.of(context).primaryColor,
@@ -47,13 +47,13 @@ class ChartBar extends StatelessWidget {
               ),
             ),
             SizedBox(
-              height: constraints.maxHeight * 0.05,
+              width: constraints.maxWidth * 0.05,
             ),
             Container(
               height: constraints.maxHeight * 0.15,
-              child: FittedBox(
-                child: Text(label),
-              ),
+              child: 
+                 Text(label,style: TextStyle(fontSize: 9,fontWeight: FontWeight.bold),),
+              
             ),
           ],
         );

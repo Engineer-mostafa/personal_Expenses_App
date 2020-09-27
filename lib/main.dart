@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import './widgets/chart_n.dart';
 
 import './widgets/new_transaction.dart';
 import './widgets/transaction_list.dart';
@@ -39,8 +40,6 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  // String titleInput;
-  // String amountInput;
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -74,12 +73,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _deleteTx(String id) {
     setState(() {
-          _userTransactions.removeWhere((tx) => tx.id == id);
+      _userTransactions.removeWhere((tx) => tx.id == id);
     });
   }
 
   void _startAddNewTransaction(BuildContext ctx) {
     showModalBottomSheet(
+      isScrollControlled: true,
       context: ctx,
       builder: (_) {
         return GestureDetector(
@@ -91,31 +91,120 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  bool _switch = false;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Personal Expenses',
-        ),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () => _startAddNewTransaction(context),
+    final islandescape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+    final appBar = AppBar(
+      title: Text(
+        'Personal Expenses',
+      ),
+      actions: <Widget>[
+        Container(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Show Chart',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 10,
+                    color: Colors.white),
+              ),
+              Switch(
+                  value: _switch,
+                  activeColor: Colors.amberAccent,
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  onChanged: (val) {
+                    setState(() {
+                      _switch = val;
+                    });
+                  }),
+            ],
           ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          // mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Chart(_recentTransactions),
-            TransactionList(_userTransactions , _deleteTx),
-          ],
         ),
+        IconButton(
+          icon: Icon(Icons.add),
+          onPressed: () => _startAddNewTransaction(context),
+        ),
+      ],
+    );
+    return Scaffold(
+      appBar: appBar,
+      body: SingleChildScrollView(
+        child: islandescape
+            ? Row(
+
+                children: _switch
+                    ? [
+                       Column(
+                           children: [
+                             Container(
+                               height:450,
+                                width: (MediaQuery.of(context).size.width -
+                                  appBar.preferredSize.height) *
+                              0.3,
+                               
+                                child: Chart_N(_recentTransactions),
+                              ),
+                           ],
+                         ),
+                       Container(
+                          height: 450,
+                         child: new Column(
+                            children: [
+                             Container(
+                          width: (MediaQuery.of(context).size.width -
+                                  appBar.preferredSize.height) *
+                              0.7,
+                            
+                          child: TransactionList(_userTransactions, _deleteTx),
+                        ),
+                            ],
+                          ),
+                       ),
+                      ]
+                    : [
+                        Container(
+                          width: (MediaQuery.of(context).size.width -
+                                  appBar.preferredSize.height ) *
+                              0.7,
+                          child: TransactionList(_userTransactions, _deleteTx),
+                        ),
+                      ],
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: _switch
+                    ? [
+                        Container(
+                          height: (MediaQuery.of(context).size.height -
+                                  appBar.preferredSize.height -
+                                  MediaQuery.of(context).padding.top) *
+                              0.3,
+                          child: Chart(_recentTransactions),
+                        ),
+                        Container(
+                          height: (MediaQuery.of(context).size.height -
+                                  appBar.preferredSize.height -
+                                  MediaQuery.of(context).padding.top) *
+                              0.7,
+                          child: TransactionList(_userTransactions, _deleteTx),
+                        ),
+                      ]
+                    : [
+                        Container(
+                          height: (MediaQuery.of(context).size.height -
+                                  appBar.preferredSize.height -
+                                  MediaQuery.of(context).padding.top) *
+                              0.7,
+                          child: TransactionList(_userTransactions, _deleteTx),
+                        ),
+                      ],
+              ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButtonLocation: islandescape? FloatingActionButtonLocation.endFloat: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () => _startAddNewTransaction(context),
